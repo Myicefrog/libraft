@@ -27,7 +27,7 @@ lib:$(OBJS)
 	$(AR) $(LIB_DIR)/$(LIB) $(OBJS) 
 
 libso:$(OBJS)
-	$(CC) -shared -o ${APP}  $(OBJS) 
+	$(CC) -shared -o $(LIB_DIR)/${APP}  $(OBJS) 
 
 
 test:$(TEST_OBJS)
