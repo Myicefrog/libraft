@@ -3,7 +3,7 @@ C++ raft lib
 
 # 说明
 
-从https://github.com/lichuang/libraft上fork下来的。
+从https://github.com/lichuang/libraft上fork下来的。原作者是把etcd的raft移植为了c++
 
 但有一些编译问题，所以修改makefile文件。
 
