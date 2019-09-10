@@ -46,7 +46,7 @@ bool isDeepEqualEntries(const EntryVec& ents1, const EntryVec& ents2) {
   if (ents1.size() != ents2.size()) {
     return false;
   }
-  int i;
+  size_t i;
   for (i = 0; i < ents1.size(); ++i) {
     if (!isDeepEqualEntry(ents1[i], ents2[i])) {
       return false;
@@ -59,7 +59,7 @@ bool isDeepEqualNodes(const vector<uint64_t>& ns1, const vector<uint64_t>& ns2) 
   if (ns1.size() != ns2.size()) {
     return false;
   }
-  int i;
+  size_t i;
   for (i = 0; i < ns1.size(); ++i) {
     if (ns1[i] != ns2[i]) {
       return false;
@@ -127,7 +127,7 @@ bool isDeepEqualReadStates(const vector<ReadState*>& rs1, const vector<ReadState
   if (rs1.size() != rs2.size()) {
     return false;
   }
-  int i;
+  size_t i;
   for (i = 0; i < rs1.size(); ++i) {
     ReadState* r1 = rs1[i];
     ReadState* r2 = rs2[i];

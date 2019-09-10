@@ -5,13 +5,13 @@
 
 struct inflights {
   // the starting index in the buffer
-  int start_;
+  uint64_t start_;
 
   // number of inflights in the buffer
-  int count_;
+  uint64_t count_;
 
   // the size of the buffer
-  int size_;
+  uint64_t size_;
 
   // buffer contains the index of the last entry
   // inside one message.
@@ -105,7 +105,7 @@ struct Progress {
   void resume();
   bool isPaused();
   bool needSnapshotAbort();
-  string string();
+  string String();
 
   Progress(uint64_t next, int maxInfilght, Logger *logger);
   ~Progress();

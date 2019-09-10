@@ -53,23 +53,23 @@ bool operator < (const connem& c1, const connem& c2) {
 }
 
 raftStateMachine::raftStateMachine(Config *c) {
-  raft = newRaft(c);
+  raft1 = newRaft(c);
 }
 
 raftStateMachine::raftStateMachine(struct raft *r)
-  : raft(r) {
+  : raft1(r) {
 }
 
 raftStateMachine::~raftStateMachine() {
-  delete raft;
+  delete raft1;
 }
 
 int raftStateMachine::step(const Message& msg) {
-  return raft->step(msg);
+  return raft1->step(msg);
 }
 
 void raftStateMachine::readMessages(vector<Message*> *msgs) {
-  raft->readMessages(msgs);
+  raft1->readMessages(msgs);
 }
 
 void idsBySize(int size, vector<uint64_t>* ids) {

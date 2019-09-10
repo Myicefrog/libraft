@@ -71,7 +71,7 @@ int MemoryStorage::Entries(uint64_t lo, uint64_t hi, uint64_t maxSize, vector<En
   if (entries_.size() == 1) {
     return ErrUnavailable;
   }
-  int i;
+  size_t i;
   for (i = lo - offset; i < hi - offset; ++i) {
     entries->push_back(entries_[i]);
   }
@@ -159,7 +159,7 @@ int MemoryStorage::Append(const EntryVec& entries) {
   uint64_t offset = appendEntries[0].index() - entries_[0].index();
   if (entries_.size() > offset) {
     entries_.erase(entries_.begin(), entries_.begin() + offset);
-    int i;
+    size_t i;
     for (i = 0; i < appendEntries.size(); ++i) {
       entries_.push_back(appendEntries[i]);
     }
@@ -167,7 +167,7 @@ int MemoryStorage::Append(const EntryVec& entries) {
   }
 
   if (entries_.size() == offset) {
-    int i;
+    size_t i;
     for (i = 0; i < appendEntries.size(); ++i) {
       entries_.push_back(appendEntries[i]);
     }

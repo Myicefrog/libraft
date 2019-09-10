@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "libraft.h"
 
 #define doLog(c) va_list args; \

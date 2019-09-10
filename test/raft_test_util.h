@@ -60,9 +60,9 @@ struct raftStateMachine : public stateMachine {
   virtual void readMessages(vector<Message*> *);
 
   virtual int type() { return raftType; }
-  virtual void* data() { return raft; }
+  virtual void* data() { return raft1; }
 
-  raft *raft;
+  raft *raft1;
 };
 
 struct blackHole : public stateMachine {

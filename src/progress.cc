@@ -130,6 +130,7 @@ bool Progress::isPaused() {
   case ProgressStateSnapshot:
     return true;
   }
+  return true;
 }
 
 // needSnapshotAbort returns true if snapshot progress's Match
@@ -138,7 +139,7 @@ bool Progress::needSnapshotAbort() {
   return state_ == ProgressStateSnapshot && match_ >= pendingSnapshot_;
 }
 
-string Progress::string() {
+string Progress::String() {
   char tmp[500];
   snprintf(tmp, sizeof(tmp), "next = %llu, match = %llu, state = %s, waiting = %d, pendingSnapshot = %llu",
     next_, match_, stateString(), isPaused(), pendingSnapshot_);
