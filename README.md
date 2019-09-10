@@ -5,7 +5,7 @@ C++ raft lib
 
 从https://github.com/lichuang/libraft上fork下来的。原作者是把etcd的raft移植为了c++
 
-但有一些编译问题，所以修改makefile文件。
+但有一些编译问题，所以修改了makefile文件。
 
 # 环境要求
 
