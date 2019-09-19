@@ -137,7 +137,9 @@ void network::send(vector<Message> *msgs) {
     cout<<"*****network send******"<<endl;
     const Message& msg = (*msgs)[0];
     stateMachine *sm = peers[msg.to()]; 
+    cout<<"network send step begin"<<endl;
     sm->step(msg);
+    cout<<"network send step end"<<endl;
     vector<Message> out;
     vector<Message*> readMsgs;
     msgs->erase(msgs->begin(), msgs->begin() + 1);
