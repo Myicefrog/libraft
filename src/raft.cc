@@ -236,6 +236,7 @@ void raft::send(Message *msg) {
 
 // sendAppend sends RPC, with entries to the given peer.
 void raft::sendAppend(uint64_t to) {
+  cout<<"raft::sendAppend"<<endl;
   Progress *pr = prs_[to];
   if (pr == NULL || pr->isPaused()) {
     logger_->Infof(__FILE__, __LINE__, "node %x paused", to);
@@ -521,6 +522,7 @@ void raft::becomeCandidate() {
 }
 
 void raft::becomeLeader() {
+  cout<<"raft::becomeLeader"<<endl;
   if (state_ == StateFollower) {
     logger_->Fatalf(__FILE__, __LINE__, "invalid transition [follower -> leader]");
   }
