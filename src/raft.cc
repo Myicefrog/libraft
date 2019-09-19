@@ -370,6 +370,7 @@ struct reverseCompartor {
 // the commit index changed (in which case the caller should call
 // r.bcastAppend).
 bool raft::maybeCommit() {
+  cout<<"maybeCommit"<<endl;
   map<uint64_t, Progress*>::const_iterator iter;
   vector<uint64_t> mis;
   for (iter = prs_.begin(); iter != prs_.end(); ++iter) {
@@ -415,6 +416,7 @@ void raft::appendEntry(EntryVec* entries) {
   for (i = 0; i < entries->size(); ++i) {
     (*entries)[i].set_term(term_);
     (*entries)[i].set_index(li + 1 + i);
+    cout<<"appendEntry term_ is "<<term_<<" index is "<<li+1+i<<endl;
   }
   raftLog_->append(*entries);
   prs_[id_]->maybeUpdate(raftLog_->lastIndex());
@@ -633,6 +635,8 @@ int raft::step(const Message& msg) {
   uint64_t term = msg.term();
   int type = msg.type();
   uint64_t from = msg.from();
+
+  logger_->Infof(__FILE__, __LINE__, "Msg [term: %llu] ",term);
 
   if (term == 0) {
   } else if (term > term_) {

@@ -317,6 +317,7 @@ bool NodeImpl::readyContainUpdate() {
 // StartNode returns a new Node given configuration and a list of raft peers.
 // It appends a ConfChangeAddNode entry for each given peer to the initial log.
 Node* StartNode(const Config* config, const vector<Peer>& peers) {
+  cout<<"StartNode"<<endl;
   NodeImpl* node = new NodeImpl();
   node->logger_ = config->logger;
   raft *r = newRaft(config);

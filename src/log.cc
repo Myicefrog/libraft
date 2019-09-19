@@ -113,9 +113,10 @@ uint64_t raftLog::lastTerm() {
 }
 
 int raftLog::entries(uint64_t i, uint64_t maxSize, EntryVec *entries) {
+  cout<<"raftLog::entries raftLog_->committed_ + 1 is "<<i<<endl;
   entries->clear();
   uint64_t lasti = lastIndex();
-
+  cout<<"lasti is "<<lasti<<endl;
   if (i > lasti) {
     return OK;
   }
@@ -144,6 +145,7 @@ bool raftLog::isUpToDate(uint64_t lasti, uint64_t term) {
 bool raftLog::maybeCommit(uint64_t maxIndex, uint64_t term) {
   uint64_t t;
   int err = this->term(maxIndex, &t);
+  cout<<"raftLog maybeCommit t is "<<t<<" maxIndex is "<<maxIndex<<" committed_ is "<<committed_<<endl;
   if (maxIndex > committed_ && zeroTermOnErrCompacted(t, err) == term) {
     commitTo(maxIndex);
     return true;
@@ -162,6 +164,7 @@ void raftLog::restore(const Snapshot& snapshot) {
 // fatal if the first index of entries < committed_
 uint64_t raftLog::append(const EntryVec& entries) {
   if (entries.empty()) {
+    cout<<"raftLog append return lastIndex"<<endl;
     return lastIndex();
   }
 
@@ -329,6 +332,7 @@ uint64_t raftLog::lastIndex() {
 
   bool ok = unstable_.maybeLastIndex(&i);
   if (ok) {
+    //cout<<"lastIndex from unstable "<<i<<endl;
     return i;
   }
 
@@ -336,7 +340,7 @@ uint64_t raftLog::lastIndex() {
   if (!SUCCESS(err)) {
     logger_->Fatalf(__FILE__, __LINE__, "lastIndex error:%s", GetErrorString(err));
   }
-
+  //cout<<"lastIndex from stroage "<<i<<endl;
   return i;
 }
 
