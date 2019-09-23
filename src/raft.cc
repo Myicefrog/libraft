@@ -758,6 +758,7 @@ int raft::step(const Message& msg) {
 }
 
 void stepLeader(raft *r, const Message& msg) {
+  cout<<"stepLeader"<<endl;
   int type = msg.type();
   size_t i;
   uint64_t term, ri;
@@ -1017,6 +1018,7 @@ void stepLeader(raft *r, const Message& msg) {
 // stepCandidate is shared by StateCandidate and StatePreCandidate; the difference is
 // whether they respond to MsgVoteResp or MsgPreVoteResp.
 void stepCandidate(raft* r, const Message& msg) {
+  cout<<"stepCandidata"<<endl;
   // Only handle vote responses corresponding to our candidacy (while in
   // StateCandidate, we may get stale MsgPreVoteResp messages in this term from
   // our pre-candidate state).
