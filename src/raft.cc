@@ -193,6 +193,7 @@ void raft::nodes(vector<uint64_t> *nodes) {
 }
 
 void raft::loadState(const HardState &hs) {
+  cout<<"raft::loadState commit is "<<hs.commit()<<endl;
   if (hs.commit() < raftLog_->committed_ || hs.commit() > raftLog_->lastIndex()) {
     logger_->Fatalf(__FILE__, __LINE__, 
       "%x state.commit %llu is out of range [%llu, %llu]", id_, hs.commit(), raftLog_->committed_, raftLog_->lastIndex());
@@ -236,7 +237,7 @@ void raft::send(Message *msg) {
 
 // sendAppend sends RPC, with entries to the given peer.
 void raft::sendAppend(uint64_t to) {
-  cout<<"raft::sendAppend"<<endl;
+  logger_->Debugf(__FILE__, __LINE__, "raft::sendAppend to %llu", to);
   Progress *pr = prs_[to];
   if (pr == NULL || pr->isPaused()) {
     logger_->Infof(__FILE__, __LINE__, "node %x paused", to);
@@ -283,6 +284,7 @@ void raft::sendAppend(uint64_t to) {
     pr->becomeSnapshot(sindex);
     logger_->Debugf(__FILE__, __LINE__, "%x paused sending replication messages to %x [%s]", id_, to, pr->String().c_str());
   } else {
+    cout<<"raft::sendAppend prepare send MsgApp type index logterm commit is "<<MsgApp<<" "<<pr->next_-1<<" "<<term<<" "<<raftLog_->committed_<<endl;
     msg->set_type(MsgApp);
     msg->set_index(pr->next_ - 1);
     msg->set_logterm(term);
@@ -302,6 +304,7 @@ void raft::sendAppend(uint64_t to) {
         pr->ins_.add(last);
         break;
       case ProgressStateProbe:
+      cout<<"raft::sendAppend ProgressStateProbe"<<endl;
         pr->pause();
         break;
       default:
@@ -334,6 +337,7 @@ void raft::sendHeartbeat(uint64_t to, const string &ctx) {
 // bcastAppend sends RPC, with entries to all peers that are not up-to-date
 // according to the progress recorded in r.prs.
 void raft::bcastAppend() {
+  logger_->Infof(__FILE__, __LINE__, "raft::bcastAppend()");
   map<uint64_t, Progress*>::const_iterator iter = prs_.begin();
   for (;iter != prs_.end();++iter) {
     if (iter->first == id_) {
@@ -371,7 +375,7 @@ struct reverseCompartor {
 // the commit index changed (in which case the caller should call
 // r.bcastAppend).
 bool raft::maybeCommit() {
-  cout<<"maybeCommit"<<endl;
+  logger_->Infof(__FILE__, __LINE__, "maybeCommit");
   map<uint64_t, Progress*>::const_iterator iter;
   vector<uint64_t> mis;
   for (iter = prs_.begin(); iter != prs_.end(); ++iter) {
@@ -522,7 +526,7 @@ void raft::becomeCandidate() {
 }
 
 void raft::becomeLeader() {
-  cout<<"raft::becomeLeader"<<endl;
+  logger_->Infof(__FILE__, __LINE__, "raft::becomeLeader");
   if (state_ == StateFollower) {
     logger_->Fatalf(__FILE__, __LINE__, "invalid transition [follower -> leader]");
   }
@@ -733,6 +737,7 @@ int raft::step(const Message& msg) {
       respMsg = new Message();
       respMsg->set_to(from);      
       respMsg->set_type(voteRespMsgType(type));
+      cout<<"MsgVote send"<<endl;
       send(respMsg);
       if (type == MsgVote) {
         electionElapsed_ = 0;
@@ -746,6 +751,7 @@ int raft::step(const Message& msg) {
       respMsg->set_to(from);      
       respMsg->set_reject(true);      
       respMsg->set_type(voteRespMsgType(type));
+      cout<<"MsgVote send"<<endl;
       send(respMsg);
     }
     break;
@@ -758,7 +764,7 @@ int raft::step(const Message& msg) {
 }
 
 void stepLeader(raft *r, const Message& msg) {
-  cout<<"stepLeader"<<endl;
+  cout<<"stepLeader type is "<<msg.type()<<endl;
   int type = msg.type();
   size_t i;
   uint64_t term, ri;
@@ -869,6 +875,8 @@ void stepLeader(raft *r, const Message& msg) {
   }
   pr = iter->second;
   int ackCnt;
+
+  cout<<"Progress is "<<from<<endl;
 
   switch (type) {
   case MsgAppResp:
@@ -1018,7 +1026,8 @@ void stepLeader(raft *r, const Message& msg) {
 // stepCandidate is shared by StateCandidate and StatePreCandidate; the difference is
 // whether they respond to MsgVoteResp or MsgPreVoteResp.
 void stepCandidate(raft* r, const Message& msg) {
-  cout<<"stepCandidata"<<endl;
+  Logger* logger = r->logger_;
+  logger->Infof(__FILE__, __LINE__, "stepCandidata");
   // Only handle vote responses corresponding to our candidacy (while in
   // StateCandidate, we may get stale MsgPreVoteResp messages in this term from
   // our pre-candidate state).
@@ -1030,7 +1039,7 @@ void stepCandidate(raft* r, const Message& msg) {
   }
   int type = msg.type();
   int granted = 0;
-  Logger* logger = r->logger_;
+  
 
   if (type == voteRespType) {
     granted = r->poll(msg.from(), msg.type(), !msg.reject());
@@ -1070,10 +1079,11 @@ void stepCandidate(raft* r, const Message& msg) {
 }
 
 void stepFollower(raft* r, const Message& msg) {
+  Logger* logger = r->logger_;
+  cout<<"stepFollower"<<endl;
   int type = msg.type();
   Message *n;
-  Logger* logger = r->logger_;
-
+  
   switch (type) {
   case MsgProp:
     if (r->leader_ == None) {
@@ -1206,6 +1216,7 @@ void raft::handleHeartbeat(const Message& msg) {
 }
 
 void raft::handleAppendEntries(const Message& msg) {
+  cout<<"raft::handleAppendEntries"<<endl;
   if (msg.index() < raftLog_->committed_) {
     Message *resp = new Message();
     resp->set_to(msg.from());
@@ -1225,6 +1236,7 @@ void raft::handleAppendEntries(const Message& msg) {
     resp->set_type(MsgAppResp);
     resp->set_index(lasti);
     send(resp);
+    cout<<"ret true raft::handleAppendEntries send MsgAppResp"<<endl;
   } else {
     uint64_t term;
     int err = raftLog_->term(msg.index(), &term);
@@ -1238,6 +1250,7 @@ void raft::handleAppendEntries(const Message& msg) {
     resp->set_reject(true);
     resp->set_rejecthint(raftLog_->lastIndex());
     send(resp);
+    cout<<"ret false raft::handleAppendEntries send MsgAppResp"<<endl;
   }
 }
 

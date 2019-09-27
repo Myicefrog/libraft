@@ -36,6 +36,7 @@ void Progress::becomeProbe() {
 }
 
 void Progress::becomeReplicate() {
+  cout<<"Progress::becomeReplicate()"<<endl;
   resetState(ProgressStateReplicate);
   next_ = match_ + 1;
 }
@@ -57,6 +58,7 @@ bool Progress::maybeUpdate(uint64_t n) {
   if (next_ < n + 1) {
     next_ = n + 1;
   }
+  cout<<"Progress::maybeUpdate updated is "<<updated<<endl;
   return updated;
 }
 
@@ -122,6 +124,7 @@ const char* Progress::stateString() {
 // MsgApps, is currently waiting for a snapshot, or has reached the
 // MaxInflightMsgs limit.
 bool Progress::isPaused() {
+  cout<<"Progress::isPaused() "<<state_<<" pasued_ is "<<paused_<<endl;
   switch (state_) {
   case ProgressStateProbe:
     return paused_;
@@ -214,6 +217,7 @@ void inflights::freeFirstOne() {
 }
 
 bool inflights::full() {
+  cout<<"inflights::full() count_ is "<<count_<<" size is "<<size_<<endl;
   return count_ == size_;
 }
 

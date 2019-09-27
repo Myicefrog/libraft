@@ -25,7 +25,7 @@ raftLog* newLog(Storage *storage, Logger *logger) {
   // Initialize our committed and applied pointers to the time of the last compaction.
   log->committed_ = firstIndex - 1;
   log->applied_    = firstIndex - 1;
-
+  
   return log;
 }
 
@@ -40,6 +40,7 @@ raftLog::raftLog(Storage *storage, Logger *logger)
 // it returns last index of new entries.
 bool raftLog::maybeAppend(uint64_t index, uint64_t logTerm, 
                           uint64_t committed, const EntryVec& entries, uint64_t *lasti) {
+  cout<<"raftLog::maybeAppend msg index "<<index<<" logTerm is "<<logTerm<<"  committed is "<<committed<<endl;
   *lasti = 0;
   if (!matchTerm(index, logTerm)) {
     return false;
@@ -143,6 +144,7 @@ bool raftLog::isUpToDate(uint64_t lasti, uint64_t term) {
 }
 
 bool raftLog::maybeCommit(uint64_t maxIndex, uint64_t term) {
+  logger_->Infof(__FILE__, __LINE__, "raftLog::maybeCommit");
   uint64_t t;
   int err = this->term(maxIndex, &t);
   cout<<"raftLog maybeCommit t is "<<t<<" maxIndex is "<<maxIndex<<" committed_ is "<<committed_<<endl;
@@ -164,7 +166,6 @@ void raftLog::restore(const Snapshot& snapshot) {
 // fatal if the first index of entries < committed_
 uint64_t raftLog::append(const EntryVec& entries) {
   if (entries.empty()) {
-    cout<<"raftLog append return lastIndex"<<endl;
     return lastIndex();
   }
 
@@ -281,6 +282,7 @@ bool raftLog::matchTerm(uint64_t i, uint64_t term) {
 }
 
 int raftLog::term(uint64_t i, uint64_t *t) {
+  logger_->Infof(__FILE__, __LINE__, "raftLog::term i is %llu", i);
   uint64_t dummyIndex;
   int err = OK;
 

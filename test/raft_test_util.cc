@@ -134,10 +134,9 @@ network* newNetwork(const vector<stateMachine*>& peers) {
 
 void network::send(vector<Message> *msgs) {
   while (!msgs->empty()) {
-    cout<<"*****network send******"<<msg.to()<<endl;
     const Message& msg = (*msgs)[0];
     stateMachine *sm = peers[msg.to()]; 
-    cout<<"network send step begin"<<endl;
+    cout<<"network send step begin "<<msg.to()<<endl;
     sm->step(msg);
     cout<<"network send step end"<<msg.to()<<endl;
     vector<Message> out;

@@ -93,12 +93,12 @@ void unstableLog::restore(const Snapshot& snapshot) {
 void unstableLog::truncateAndAppend(const EntryVec& entries) {
   uint64_t after = entries[0].index();
   cout<<"unstableLog::truncateAndAppend after is "<<after<<" offset_ is "<<offset_<<endl;
-  cout<<"unstableLog::truncateAndAppend entries size is "<<entries.size()<<endl;
+  cout<<"unstableLog::truncateAndAppend entries size is "<<entries.size()<<" entries_size is "<<entries_.size()<<endl;
   if (after == offset_ + uint64_t(entries_.size())) {
     // after is the next index in the u.entries
     // directly append
     entries_.insert(entries_.end(), entries.begin(), entries.end());
-    logger_->Infof(__FILE__, __LINE__, "ENTRY size: %d", entries_.size());
+    logger_->Infof(__FILE__, __LINE__, "directly append ENTRY size: %d", entries_.size());
     return;
   }
 
