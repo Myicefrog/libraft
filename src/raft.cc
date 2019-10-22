@@ -382,6 +382,8 @@ bool raft::maybeCommit() {
     mis.push_back(iter->second->match_);
   }
   sort(mis.begin(), mis.end(), reverseCompartor<uint64_t>());
+  cout<<"maybeComit is "<<mis[0]<<" "<<mis[1]<<" "<<mis[1]<<endl;
+  cout<<"quorum is "<<quorum()<<endl;
   return raftLog_->maybeCommit(mis[quorum() - 1], term_);
 }
 
@@ -1236,7 +1238,7 @@ void raft::handleAppendEntries(const Message& msg) {
     resp->set_type(MsgAppResp);
     resp->set_index(lasti);
     send(resp);
-    cout<<"ret true raft::handleAppendEntries send MsgAppResp"<<endl;
+    cout<<"ret true raft::handleAppendEntries send MsgAppResp lasti is "<<lasti<<endl;
   } else {
     uint64_t term;
     int err = raftLog_->term(msg.index(), &term);
