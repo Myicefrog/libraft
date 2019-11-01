@@ -428,6 +428,7 @@ void raft::appendEntry(EntryVec* entries) {
     cout<<"appendEntry term_ is "<<term_<<" index is "<<li+1+i<<endl;
   }
   raftLog_->append(*entries);
+  cout<<"appendEntry maybeUpdate is raftLog_->lastIndex() "<<raftLog_->lastIndex()<<endl;
   prs_[id_]->maybeUpdate(raftLog_->lastIndex());
   // Regardless of maybeCommit's return, our caller will call bcastAppend.
   maybeCommit();
