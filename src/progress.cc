@@ -58,7 +58,7 @@ bool Progress::maybeUpdate(uint64_t n) {
   if (next_ < n + 1) {
     next_ = n + 1;
   }
-  cout<<"Progress::maybeUpdate updated is "<<updated<<endl;
+  cout<<"Progress::maybeUpdate updated is "<<updated<<" match is "<<match_<<" next_ is "<<next_<<endl;
   return updated;
 }
 

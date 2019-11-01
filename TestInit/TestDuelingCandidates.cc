@@ -32,6 +32,7 @@ int main()
     	raft *r = newTestRaft(2, ids, 10, 1, new MemoryStorage(&kDefaultLogger));
     	peers.push_back(new raftStateMachine(r)); 
   	}
+	  
   	{
     	vector<uint64_t> ids;
     	ids.push_back(1);

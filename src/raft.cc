@@ -325,6 +325,7 @@ void raft::sendHeartbeat(uint64_t to, const string &ctx) {
   // or it might not have all the committed entries.
   // The leader MUST NOT forward the follower's commit to
   // an unmatched index.
+  cout<<"raft::sendHeartbeat match_ committed_ "<<prs_[to]->match_<<" "<<raftLog_->committed_<<endl;
   uint64_t commit = min(prs_[to]->match_, raftLog_->committed_);
   Message *msg = new Message();
   msg->set_to(to);
@@ -351,6 +352,7 @@ void raft::bcastAppend() {
 // bcastHeartbeat sends RPC, without entries to all the peers.
 void raft::bcastHeartbeat() {
   string ctx = readOnly_->lastPendingRequestCtx();
+  cout<<"bcastHeartbeat ctx is "<<ctx<<endl;
   bcastHeartbeatWithCtx(ctx);
 }
 
@@ -382,7 +384,7 @@ bool raft::maybeCommit() {
     mis.push_back(iter->second->match_);
   }
   sort(mis.begin(), mis.end(), reverseCompartor<uint64_t>());
-  cout<<"maybeComit is "<<mis[0]<<" "<<mis[1]<<" "<<mis[1]<<endl;
+  cout<<"maybeComit mis is "<<mis[0]<<" "<<mis[1]<<" "<<mis[2]<<endl;
   cout<<"quorum is "<<quorum()<<endl;
   return raftLog_->maybeCommit(mis[quorum() - 1], term_);
 }
@@ -448,6 +450,8 @@ void raft::tickElection() {
 void raft::tickHeartbeat() {
   heartbeatElapsed_++;
   electionElapsed_++;
+
+  cout<<"raft::tickHeartbeat heartbeatElapsed_ "<<heartbeatElapsed_<<" electionElapsed_ "<<electionElapsed_<<" electionTimeout_ "<<electionTimeout_<<" heartbeatTimeout_ is "<<heartbeatTimeout_<<endl;
 
   if (electionElapsed_ >= electionTimeout_) {
     electionElapsed_ = 0;
@@ -632,6 +636,9 @@ int raft::poll(uint64_t id, MessageType t, bool v) {
       granted++;
     }
   }
+
+  logger_->Infof(__FILE__, __LINE__, "granted %d", granted);
+
   return granted;
 }
 
@@ -761,7 +768,10 @@ int raft::step(const Message& msg) {
     stateStep(this, msg);
     break;
   }
-
+  map<uint64_t, Progress*>::const_iterator iter;
+  for (iter = prs_.begin(); iter != prs_.end(); ++iter) {
+    cout<<"step prs match is "<<iter->second->match_<<endl;
+  }
   return OK;
 }
 
