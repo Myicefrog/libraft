@@ -946,6 +946,7 @@ void stepLeader(raft *r, const Message& msg) {
     }
 
     if (r->readOnly_->option_ != ReadOnlySafe || msg.context().empty()) {
+      cout<<"MsgHeartbeatResp return"<<endl;
       return;
     }
 
