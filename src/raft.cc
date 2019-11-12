@@ -492,6 +492,7 @@ bool raft::promotable() {
 // than or equal to the randomized election timeout in
 // [electiontimeout, 2 * electiontimeout - 1].
 bool raft::pastElectionTimeout() {
+  cout<<"electionElapsed_ is "<<electionElapsed_<<" randomizedElectionTimeout_ is "<<randomizedElectionTimeout_<<endl;
   return electionElapsed_ >= randomizedElectionTimeout_;
 }
 
