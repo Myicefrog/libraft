@@ -384,7 +384,9 @@ bool raft::maybeCommit() {
     mis.push_back(iter->second->match_);
   }
   sort(mis.begin(), mis.end(), reverseCompartor<uint64_t>());
-  cout<<"maybeComit mis is "<<mis[0]<<" "<<mis[1]<<" "<<mis[2]<<endl;
+  size_t num = mis.size();
+  for(int i = 0; i < num; ++i)
+    cout<<i<<" maybeComit mis is "<<mis[i]<<endl;
   cout<<"quorum is "<<quorum()<<endl;
   return raftLog_->maybeCommit(mis[quorum() - 1], term_);
 }
