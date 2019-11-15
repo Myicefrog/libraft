@@ -10,21 +10,25 @@ raftLog* newLog(Storage *storage, Logger *logger) {
   int err;
 
   err = storage->FirstIndex(&firstIndex);
+  cout<<"newLog firstIndex is "<<firstIndex<<endl;
   if (!SUCCESS(err)) {
     logger->Fatalf(__FILE__, __LINE__, "get first index err:%s", GetErrorString(err));
   }
 
   err = storage->LastIndex(&lastIndex);
+  cout<<"newLog lastIndex is "<<lastIndex<<endl;
   if (!SUCCESS(err)) {
     logger->Fatalf(__FILE__, __LINE__, "get last index err:%s", GetErrorString(err));
   }
 
+//offset是最后一个索引加1
   log->unstable_.offset_ = lastIndex + 1;
   log->unstable_.logger_ = logger;
 
   // Initialize our committed and applied pointers to the time of the last compaction.
   log->committed_ = firstIndex - 1;
   log->applied_    = firstIndex - 1;
+  cout<<"newLog offset "<<log->unstable_.offset_<<" log->committed_ "<<log->committed_<<" log->applied_ "<<log->applied_<<endl;
   
   return log;
 }
@@ -121,8 +125,8 @@ int raftLog::entries(uint64_t i, uint64_t maxSize, EntryVec *entries) {
   if (i > lasti) {
     return OK;
   }
-
   return slice(i, lasti + 1, maxSize, entries);
+  cout<<"raftLog::entries slice entries "<<entries->size()<<endl;
 }
 
 // allEntries returns all entries in the log.
@@ -289,6 +293,7 @@ int raftLog::term(uint64_t i, uint64_t *t) {
   *t = 0;
   // the valid term range is [index of dummy entry, last index]
   dummyIndex = firstIndex() - 1;
+  logger_->Infof(__FILE__, __LINE__, "raftLog::term dummyIndex is %llu", dummyIndex);
   if (i < dummyIndex || i > lastIndex()) {
     return OK;
   }
@@ -299,6 +304,7 @@ int raftLog::term(uint64_t i, uint64_t *t) {
   }
 
   err = storage_->Term(i, t);
+  cout<<"storage_->Term(i, t) is "<<*t<<endl;
   if (SUCCESS(err)) {
     goto out;
   }

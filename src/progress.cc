@@ -36,7 +36,7 @@ void Progress::becomeProbe() {
 }
 
 void Progress::becomeReplicate() {
-  cout<<"Progress::becomeReplicate()"<<endl;
+  cout<<"Progress::becomeReplicate() ProgressStateReplicate paused_ is false ins_reset pendingSnapshot is 0"<<endl;
   resetState(ProgressStateReplicate);
   next_ = match_ + 1;
 }

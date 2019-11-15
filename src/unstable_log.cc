@@ -47,6 +47,7 @@ bool unstableLog::maybeTerm(uint64_t i, uint64_t *term) {
 
   uint64_t last;
   bool ok = maybeLastIndex(&last);
+  cout<<"maybeLastIndex last is "<<last<<endl;
   if (!ok) {
     return false;
   }
@@ -54,6 +55,7 @@ bool unstableLog::maybeTerm(uint64_t i, uint64_t *term) {
     return false;
   }
   *term = entries_[i - offset_].term();
+  cout<<"term is "<<*term<<endl;
   return true;
 }
 
@@ -63,7 +65,7 @@ void unstableLog::stableTo(uint64_t i, uint64_t t) {
   if (!ok) {
     return;
   }
-
+  cout<<"unstableLog::stableTo is i "<<i<<" t is "<<t<<" gt is "<<gt<<" offset_ is "<<offset_<<endl;
   // if i < offset, term is matched with the snapshot
   // only update the unstable entries if term is matched with
   // an unstable entry.

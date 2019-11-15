@@ -22,4 +22,5 @@ bool isResponseMessage(const MessageType type);
 // string util
 string joinStrings(const vector<string>& strs, const string &sep);
 
+
 #endif  // __UTIL_H__
