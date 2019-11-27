@@ -406,6 +406,7 @@ void raft::reset(uint64_t term) {
 
   abortLeaderTransfer();
   votes_.clear();
+  
   map<uint64_t, Progress*>::iterator iter = prs_.begin();
   for (; iter != prs_.end(); ++iter) {
     uint64_t id = iter->first;
@@ -416,6 +417,7 @@ void raft::reset(uint64_t term) {
       pr = prs_[id];
       pr->match_ = raftLog_->lastIndex();
     }
+    cout<<"raft::rest new "<<id<<" Progress next "<<pr->next_<<" match "<<pr->match_<<endl;
   }
   pendingConf_ = false;
   delete readOnly_;
@@ -1237,6 +1239,7 @@ void raft::handleHeartbeat(const Message& msg) {
 void raft::handleAppendEntries(const Message& msg) {
   cout<<"raft::handleAppendEntries"<<endl;
   if (msg.index() < raftLog_->committed_) {
+    cout<<"raft::handleAppendEntries index < committed"<<endl;
     Message *resp = new Message();
     resp->set_to(msg.from());
     resp->set_type(MsgAppResp);

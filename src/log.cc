@@ -54,7 +54,7 @@ bool raftLog::maybeAppend(uint64_t index, uint64_t logTerm,
 
   lastNewI = index + (uint64_t)entries.size();
   ci = findConflict(entries);
-
+  cout<<"findConflict index is "<<ci<<endl;
   if (ci != 0 && ci <= committed_) {
     logger_->Fatalf(__FILE__, __LINE__, "entry %llu conflict with committed entry [committed(%llu)]", ci, committed_);
   }
